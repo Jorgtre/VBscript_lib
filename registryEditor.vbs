@@ -1,7 +1,7 @@
 'Set redit = new registryEditor
 
 ' *** Create Value *** '
-'hive.createValue "HKEY_CURRENT_USER\Test", "ValueName", "REG_SZ", "value"
+'redit.createValue "HKEY_CURRENT_USER\Test", "ValueName", "REG_SZ", "value"
 
 ' *** Create many values by setting a root  *** '
 'redit.setRoot "HKEY_CURRENT_USER"
