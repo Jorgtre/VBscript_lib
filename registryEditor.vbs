@@ -48,8 +48,8 @@ Class registryEditor
 		HKEY_CLASSES_ROOT 	= &H80000000
 		HKEY_CURRENT_USER 	= &H80000001
 		HKEY_LOCAL_MACHINE 	= &H80000002
-		HKEY_USERS 			= &H80000003
-		HKEY_CURRENT_CONFIG = &H80000005
+		HKEY_USERS 		= &H80000003
+		HKEY_CURRENT_CONFIG     = &H80000005
 	
 		Set h_oShell = CreateObject("WScript.Shell")
 		Set h_oReg = GetObject("winmgmts:" & "{impersonationLevel=impersonate}!\\" & strComputer & "\root\default:StdRegProv")
