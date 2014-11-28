@@ -26,12 +26,12 @@ Class computerInfo
 	Public Function getOSArchitecture()
 		arch = c_oShell.ExpandEnvironmentStrings("%PROCESSOR_ARCHITECTURE%")
 		Select Case arch
-		Case "AMD64"
-			getOSArchitecture = "x64"
-		Case "x86"
-			getOSArchitecture = "x86"
-		Case Else
-			getOSArchitecture = "unknown"
+		    Case "AMD64"
+			    getOSArchitecture = "x64"
+		    Case "x86"
+			    getOSArchitecture = "x86"
+		    Case Else
+			    getOSArchitecture = "unknown"
 		End Select
 	End Function
 
