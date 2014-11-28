@@ -1,13 +1,16 @@
 'Set redit = new registryEditor
 
-' *** Create Value *** '
-'redit.createValue "HKEY_CURRENT_USER\Test", "ValueName", "REG_SZ", "value"
+' Quick creation of registry value, usefull for when u just want to get it done!
+redit.createValue "HKEY_LOCAL_MACHINE\Software\Policies\Google\Update", "AutoUpdateCheckPeriodMinutes", "REG_DWORD", "0" 
 
-' *** Create many values by setting a root  *** '
-'redit.setRoot "HKEY_CURRENT_USER"
-'redit.createValue "Test", "ValueName1", "REG_SZ", "value"
-'redit.createValue "Test", "ValueName2", "REG_SZ", "value"
-'redit.createValue "Test", "ValueName3", "REG_SZ", "value"
+' Using the setRoot Function when setting multiple keys, wich removes the need of
+' writing the whole path every time.
+
+regEdit.setRoot "HKLM\Software\Policies\Google"
+regEdit.createValue "Update", "AutoUpdateCheckPeriodMinutes", "REG_DWORD", "0"
+regEdit.createValue "chrome", "PasswordManagerEnabled", "REG_DWORD", "0"
+regEdit.createValue "chrome", "PasswordManagerAllowShowPasswords", "REG_DWORD", "0"
+regEdit.createValue "chrome\testKey\foo" "testValueName", "REG_DWORD", "0"
 
 ' *** Get SubKeys *** '
 'redit.setRoot "HKEY_CURRENT_USER"
@@ -20,6 +23,16 @@
 ' *** Get Multiple values *** '
 'redit.setRoot "HKEY_CURRENT_USER"
 'subValues = redit.getSubValues("Test")
+
+' *** Hive example *** '
+' Used when editing the NTUSER.DAT file. in this case setRoot is used as the name where the
+'hive will be loaded
+
+redit.setHiveFile "C:\Users\Default\NTUSER.DAT"
+redit.setRoot "HKU\DefaultUser"
+redit.loadHive()
+'change it
+redit.unLoadHive()
 
 
 Class registryEditor
@@ -160,7 +173,7 @@ Class registryEditor
 				HKEY_ENUM_VALUE = HKEY_CURRENT_USER
 			Case "HKEY_LOCAL_MACHINE", "HKLM"
 				HKEY_ENUM_VALUE = HKEY_LOCAL_MACHINE
-			Case "HKEY_USERS"
+			Case "HKEY_USERS", "HKU"
 				HKEY_ENUM_VALUE = HKEY_USERS
 			Case "HKEY_CURRENT_CONFIG", "HKCC"
 				HKEY_ENUM_VALUE = HKEY_CURRENT_CONFIG
