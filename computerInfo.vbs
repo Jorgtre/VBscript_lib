@@ -1,5 +1,5 @@
 Class computerInfo
-	' *** Version 0.00.02 *** '
+	' *** Version 0.00.05 *** '
 	Private c_oShell
 	Private c_oWMI
 	Private strComputer
@@ -7,31 +7,32 @@ Class computerInfo
 	Public Sub Class_initialize()
 		strComputer = "."
 		Set c_oShell = CreateObject("Wscript.Shell")
-		Set oWMI = GetObject("winmgmts:" & "{impersonationLevel=impersonate}!\\" & strComputer & "\root\cimv2")
+		Set c_oWMI = GetObject("winmgmts:" & "{impersonationLevel=impersonate}!\\" & strComputer & "\root\cimv2")
 	End Sub
 	
-	Function getLoggedOnUsersByDomain(d)
+	Public Function getLoggedInUsersByDomain(d)
+		'Returns Dictionary
 		query = "SELECT * FROM Win32_Process"
-		Set processCollection = oWMI.ExecQuery(query)
-		Set userList = CreateObject("System.Collections.ArrayList")
+		Set processCollection = c_oWMI.ExecQuery(query)
+		Set userDic = CreateObject("Scripting.Dictionary")
 		For Each process In processCollection
 			process.GetOwner username, domain
 			If domain = d Then
-				userList.Add username
+				userDic(username) = 0
 			End if
 		Next
-		Set getLoggedOnUsersByDomain = userList
+		Set getLoggedInUsersByDomain = userDic
 	End Function
 	
 	Public Function getOSArchitecture()
 		arch = c_oShell.ExpandEnvironmentStrings("%PROCESSOR_ARCHITECTURE%")
 		Select Case arch
-		    Case "AMD64"
-			    getOSArchitecture = "x64"
-		    Case "x86"
-			    getOSArchitecture = "x86"
-		    Case Else
-			    getOSArchitecture = "unknown"
+			Case "AMD64"
+				getOSArchitecture = "x64"
+			Case "x86"
+				getOSArchitecture = "x86"
+			Case Else
+				getOSArchitecture = "unknown"
 		End Select
 	End Function
 
