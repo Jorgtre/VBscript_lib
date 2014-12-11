@@ -1,11 +1,11 @@
 
-
+' *** Example *** '
 
 'set java = new program
-'java.setAssociatedProcesses(Array("iexplore.exe", "firefox.exe"))
-'java.killAssociatedProcesses()
+'java.killAssociatedProcesses(Array("iexplore.exe", "firefox.exe"))
 'java.uninstallByMatchingDisplayName("Java ")
 'java.installByCommand("msiexec /I java.msi TRANSFORMS=transform.mst /passive /norestart")
+'java.installUpdate("JavaUpdate.msp")
 
 
 
@@ -13,10 +13,8 @@
 
 
 Class program
-	' *** Version 0.01.01 *** '
+	' *** Version 0.01.02 *** '
 	Private p_oShell
-	Private p_MSI
-	Private p_associatedProcesses
 	Private p_WMI
 	Private p_oReg
 	
@@ -24,12 +22,10 @@ Class program
 	Private HKEY_LOCAL_MACHINE
 	
 	Public sub Class_Initialize
-		p_MSI = "NULL"
 		strComputer = "."
 		HKEY_LOCAL_MACHINE = &H80000002
 	
 		Set p_oShell = CreateObject("Wscript.Shell")
-		p_associatedProcesses = Array("")
 		Set p_WMI = GetObject("winmgmts:" & "{impersonationLevel=impersonate}!\\" & strComputer & "\root\cimv2")
 		Set p_oReg = GetObject("winmgmts:" & "{impersonationLevel=impersonate}!\\" & strComputer & "\root\default:StdRegProv")
 		
@@ -46,7 +42,11 @@ Class program
 	
 	Public Function uninstallByCommand(command)
 		p_oShell.Run command, 1, True
-	end Function
+	End Function
+	
+	Public Function installUpdate(mspFile)
+		p_oShell.Run "msiexec /update " & mspFile & " /passive /norestart", 1, True
+	End Function
 	
 	Public Function uninstallByMatchingDisplayName(sw_displayName)
 		Set guids = getGUIdsByDisplayName(sw_displayName)
@@ -55,8 +55,8 @@ Class program
 		Next
 	End Function
 	
-	Public Function killAssociatedProcesses()
-		For Each processName In p_associatedProcesses
+	Public Function killAssociatedProcesses(associatedProcesses)
+		For Each processName In associatedProcesses
 			Set processInstances = p_WMI.ExecQuery("SELECT * FROM Win32_Process WHERE Name='" & processName & "'")  
 			For Each processInstance In processInstances
 				p_oShell.Run "cmd.exe /c taskkill /IM " & processInstance.name & " /f", 0, True
@@ -80,12 +80,6 @@ Class program
 			Next
 		Next
 		Set getGUIdsByDisplayName = guidList
-	End Function
-	
-	' *** Getters And Setters *** '
-	
-	Public Function setAssociatedProcesses(processes)
-		p_associatedProcesses = processes
 	End Function
 	
 End Class
